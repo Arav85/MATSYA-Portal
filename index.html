@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishery Data Collection Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .portal-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .portal-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .report-card, .farm-card, .culture-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .report-card:hover, .farm-card:hover, .culture-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+        /* Custom focus ring for better accessibility */
+        .focus-ring:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+        }
+        /* Prevent number input spinners */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        input:disabled, select:disabled {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div id="main-portal-page" class="flex items-center justify-center min-h-screen">
+        <div class="container mx-auto p-4 sm:p-6 lg:p-8 text-center">
+            <header class="mb-12">
+                <div class="inline-block bg-blue-500 p-4 rounded-full mb-4 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-800">M.A.T.S.Y.A</h1>
+                <p class="text-gray-500 mt-2 text-lg">Monitoring Antimicrobial Treatment and Surveillance for Yield and Adherence</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-4xl mx-auto justify-items-center">
+                <a href="#" onclick="showSection('farmer-portal-page')" class="portal-card bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm text-left">
+                    <div class="bg-yellow-100 text-yellow-500 rounded-full h-16 w-16 flex items-center justify-center mb-6">
+                        <svg xmlns="https://i.postimg.cc/4KVmm0Py/IMG-0048.png" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">Farmer Portal</h2>
+                    <p class="text-gray-600 mt-2 mb-6">Manage farm details, stocking, health, and AMU records.</p>
+                    <span class="font-semibold text-blue-600 hover:text-blue-800 transition">Go to Farmer Portal →</span>
+                </a>
+                <a href="#" onclick="showSection('vet-portal-page')" class="portal-card bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm text-left">
+                    <div class="bg-blue-100 text-blue-500 rounded-full h-16 w-16 flex items-center justify-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">Veterinarian Portal</h2>
+                    <p class="text-gray-600 mt-2 mb-6">File visitation reports, observations, and prescriptions.</p>
+                    <span class="font-semibold text-blue-600 hover:text-blue-800 transition">Go to Vet Portal →</span>
+                </a>
+                <a href="#" onclick="showSection('government-portal-page')" class="portal-card bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm text-left md:col-span-2">
+                    <div class="bg-gray-100 text-gray-500 rounded-full h-16 w-16 flex items-center justify-center mb-6">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">Government Portal</h2>
+                    <p class="text-gray-600 mt-2 mb-6">View aggregated data and reports for regulatory oversight.</p>
+                    <span class="font-semibold text-blue-600 hover:text-blue-800 transition">Go to Government Portal →</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="farmer-portal-page" class="hidden">
+        
+        <div id="farmer-registration-section" class="min-h-screen flex items-center justify-center p-4">
+             <div class="max-w-xl w-full relative">
+                <button onclick="showSection('main-portal-page')" title="Go back" class="absolute top-4 left-4 text-gray-400 hover:text-gray-600 transition p-2 rounded-full hover:bg-gray-100 z-10">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <form id="registrationForm" class="bg-white p-8 pt-16 rounded-2xl shadow-lg space-y-6">
+                    <header class="text-center mb-4">
+                        <h1 class="text-3xl font-bold text-gray-800">Farmer Registration</h1>
+                        <p class="text-gray-500 mt-2">Please register your farm to continue.</p>
+                    </header>
+                    <div>
+                        <label for="regFarmName" class="block text-sm font-medium text-gray-600 mb-1">Farm Name*</label>
+                        <input type="text" id="regFarmName" name="regFarmName" placeholder="Enter your farm's name" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required>
+                    </div>
+                    <div>
+                        <label for="regAddress" class="block text-sm font-medium text-gray-600 mb-1">Farm Address*</label>
+                        <input type="text" id="regAddress" name="regAddress" placeholder="Enter farm's full address" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required>
+                    </div>
+                    <div>
+                        <label for="regFarmerName" class="block text-sm font-medium text-gray-600 mb-1">Farmer Name*</label>
+                        <input type="text" id="regFarmerName" name="regFarmerName" placeholder="Enter your full name" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required>
+                    </div>
+                     <div>
+                        <label for="regPhone" class="block text-sm font-medium text-gray-600 mb-1">Phone Number*</label>
+                        <input type="tel" id="regPhone" name="regPhone" placeholder="Enter your contact number" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required>
+                    </div>
+                     <div>
+                        <label for="regAadhar" class="block text-sm font-medium text-gray-600 mb-1">Aadhar Number*</label>
+                        <input type="text" id="regAadhar" name="regAadhar" placeholder="Enter 12-digit Aadhar number" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required pattern="\d{12}" title="Aadhar number must be 12 digits.">
+                    </div>
+                    <div class="flex items-center justify-end pt-4">
+                         <div>
+                            <p id="registration-error" class="text-red-500 text-sm mr-4 hidden"></p>
+                            <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+                                Register & Continue
+                            </button>
+                         </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="farmer-dashboard-section" class="hidden min-h-screen p-4 sm:p-6 lg:p-8">
+            <div class="container mx-auto max-w-7xl relative">
+                 <button onclick="showSection('main-portal-page')" title="Back to Main Portal" class="absolute top-0 left-0 text-gray-400 hover:text-gray-600 transition p-2 rounded-full hover:bg-gray-100 z-10">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                </button>
+                <header class="text-center mb-8">
+                      <h1 class="text-3xl font-bold text-gray-800">Farmer Dashboard</h1>
+                      <p class="text-gray-500 mt-2">Please select a culture type to view or manage reports.</p>
+                </header>
+
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-8">
+                    <div onclick="viewCultureReports('freshwater')" class="culture-card bg-white p-4 rounded-xl shadow-md cursor-pointer flex flex-col items-center justify-center text-center w-56 h-56">
+                        <div class="bg-blue-100 text-blue-600 p-3 rounded-full mb-3">
+                            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12c-3 4-6 4-6 4s-3-1-6-4c-3-4-2-8 0-10 2-2 6-2 8 0s3 6 0 10z"></path><path d="M16 12s-3-1-6-4c-3-4-2-8 0-10 2-2 6-2 8 0s3 6 0 10z"></path><path d="M11.5 14.5c-3 4-6 4-6 4s-3-1-6-4c-3-4-2-8 0-10"></path><path d="M11.5 14.5s-3-1-6-4"></path></svg>
+                        </div>
+                        <h2 class="text-lg font-semibold text-gray-800">Freshwater Pond Culture</h2>
+                        <p class="text-xs text-gray-500 mt-1 px-2">e.g., Rohu, Catla, Mrigal, Pangasius, Tilapia.</p>
+                    </div>
+                    <div onclick="viewCultureReports('brackishwater')" class="culture-card bg-white p-4 rounded-xl shadow-md cursor-pointer flex flex-col items-center justify-center text-center w-56 h-56">
+                         <div class="bg-green-100 text-green-600 p-3 rounded-full mb-3">
+                             <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 17C13.3137 17 16 14.3137 16 11C16 7.68629 13.3137 5 10 5C6.68629 5 4 7.68629 4 11C4 14.3137 6.68629 17 10 17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M19 19L14.5 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8 11H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                         </div>
+                        <h2 class="text-lg font-semibold text-gray-800">Brackishwater Shrimp Farming</h2>
+                        <p class="text-xs text-gray-500 mt-1 px-2">e.g., Vannamei Shrimp, Tiger Prawn.</p>
+                    </div>
+                    <div onclick="viewCultureReports('mariculture')" class="culture-card bg-white p-4 rounded-xl shadow-md cursor-pointer flex flex-col items-center justify-center text-center w-56 h-56">
+                         <div class="bg-yellow-100 text-yellow-600 p-3 rounded-full mb-3">
+                            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z"></path></svg>
+                         </div>
+                        <h2 class="text-lg font-semibold text-gray-800">Other Coastal Culture</h2>
+                        <p class="text-xs text-gray-500 mt-1 px-2">e.g., Seaweed, Mussels, Oysters.</p>
+                    </div>
+                </div>
+
+                <section id="calculator-tool-section" class="mt-12">
+                    <div class="w-full max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                        <div class="text-center">
+                            <h2 class="text-2xl sm:text-3xl font-bold text-blue-800">Aquaculture Drug Calculators</h2>
+                            <p id="header-subtitle" class="mt-2 text-sm sm:text-base text-gray-600">Predicts the optimal withdrawal time (WDT) to ensure fish are residue-safe.</p>
+                        </div>
+
+                        <div class="mt-6 mb-8 border-b border-gray-200">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button id="tab1-btn" class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm border-blue-600 text-blue-700">
+                                    WDT Predictor
+                                </button>
+                                <button id="tab2-btn" class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    Residue Rate Calculator
+                                </button>
+                            </nav>
+                        </div>
+
+                        <div id="tab1-content">
+                            <form id="calcForm" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <fieldset class="border border-gray-300 rounded-lg p-4 h-full">
+                                            <legend class="text-lg font-semibold text-blue-700 px-2">Drug & Regulatory Data</legend>
+                                            <div class="space-y-4 mt-2">
+                                                <div>
+                                                    <label for="drugSelect" class="block text-sm font-medium text-gray-700">Select Approved Drug</label>
+                                                    <select id="drugSelect" name="drugSelect" class="focus-ring mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                                        <option value="">-- Select a drug --</option>
+                                                        </select>
+                                                    <p class="mt-2 text-xs text-gray-500">This will pre-fill MRL and an *estimated* Half-life where available.</p>
+                                                </div>
+                                                <div>
+                                                    <label for="mrl" class="block text-sm font-medium text-gray-700">Maximum Residue Limit (MRL)</label>
+                                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                                        <input type="number" step="any" id="mrl" name="mrl" class="focus-ring block w-full pr-12 sm:text-sm border-gray-300 rounded-md py-2 px-3" placeholder="e.g., 100" required>
+                                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                            <span class="text-gray-500 sm:text-sm">µg/kg</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label for="cmax" class="block text-sm font-medium text-gray-700">Peak Tissue Concentration (C<sub>max</sub>)</label>
+                                                      <div class="mt-1 relative rounded-md shadow-sm">
+                                                        <input type="number" step="any" id="cmax" name="cmax" class="focus-ring block w-full pr-12 sm:text-sm border-gray-300 rounded-md py-2 px-3" placeholder="e.g., 2500" required>
+                                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                            <span class="text-gray-500 sm:text-sm">µg/kg</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label for="thalf" class="block text-sm font-medium text-gray-700">Elimination Half-life (t<sub>1/2</sub>)</label>
+                                                      <div class="mt-1 relative rounded-md shadow-sm">
+                                                        <input type="number" step="any" id="thalf" name="thalf" class="focus-ring block w-full pr-12 sm:text-sm border-gray-300 rounded-md py-2 px-3" placeholder="e.g., 48" required>
+                                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                            <span class="text-gray-500 sm:text-sm">hours</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="space-y-6">
+                                        <fieldset class="border border-gray-300 rounded-lg p-4">
+                                            <legend class="text-lg font-semibold text-blue-700 px-2">Treatment Plan Details</legend>
+                                            <div class="mt-2">
+                                                 <label for="dosage" class="block text-sm font-medium text-gray-700">Daily Dosage Amount</label>
+                                                 <div class="mt-1 relative rounded-md shadow-sm">
+                                                    <input type="number" step="any" id="dosage" name="dosage" class="focus-ring block w-full pr-24 sm:text-sm border-gray-300 rounded-md py-2 px-3" placeholder="e.g., 10">
+                                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                        <span class="text-gray-500 sm:text-sm">mg/kg biomass</span>
+                                                    </div>
+                                                </div>
+                                                <p class="mt-2 text-xs text-gray-500">Enter dosage to generate a monthly plan. Assumes a 7-day treatment course.</p>
+                                            </div>
+                                        </fieldset>
+                                        <fieldset class="border border-gray-300 rounded-lg p-4">
+                                            <legend class="text-lg font-semibold text-blue-700 px-2">Optional Temperature Data</legend>
+                                            <div class="mt-2">
+                                                 <label for="temp" class="block text-sm font-medium text-gray-700">Average Water Temperature</label>
+                                                 <div class="mt-1 relative rounded-md shadow-sm">
+                                                    <input type="number" step="any" id="temp" name="temp" class="focus-ring block w-full pr-12 sm:text-sm border-gray-300 rounded-md py-2 px-3" placeholder="e.g., 15">
+                                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                        <span class="text-gray-500 sm:text-sm">°C</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <button type="submit" id="submitButton" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed">
+                                    <svg id="spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" style="display: none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span id="buttonText">Predict & Generate Plan</span>
+                                </button>
+                            </form>
+                            <div id="loadingText" class="text-center mt-4 text-gray-600" style="display: none;">
+                                <p id="loadingMessage" class="text-sm"></p>
+                            </div>
+                            <div id="results" class="mt-8 text-center bg-gray-100 p-6 rounded-lg border border-gray-200" style="display: none;">
+                                <h2 class="text-base font-medium text-gray-600">Predicted Withdrawal Time</h2>
+                                <p id="resultText" class="text-4xl font-bold mt-2"></p>
+                                <p id="degreeDayText" class="text-gray-500 mt-2"></p>
+                            </div>
+                            <div id="dosagePlan" class="mt-8" style="display: none;">
+                                 <h2 class="text-xl font-bold text-center text-blue-800 mb-4">Treatment & Withdrawal Plan</h2>
+                                 <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-gray-600 mb-2 px-2">
+                                     <div>Sun</div> <div>Mon</div> <div>Tue</div> <div>Wed</div> <div>Thu</div> <div>Fri</div> <div>Sat</div>
+                                 </div>
+                                 <div id="planContainer" class="grid grid-cols-7 gap-2"></div>
+                            </div>
+                        </div>
+                        
+                        <div id="tab2-content" style="display: none;">
+                             <div class="p-4 bg-gray-100 rounded-lg text-center mb-6">
+                                <p class="text-sm font-medium text-gray-700">Formula:</p>
+                                <p class="text-lg font-mono text-gray-900">R(t) = [R₀ * e<sup>-(K₀ + L * G(t))</sup>] + A₀</p>
+                                <p class="mt-2 text-xs text-gray-500">where L = 0.02 and G(t) = (ln(W₂) - ln(W₁) * t)/100</p>
+                            </div>
+                            <form id="calculatorForm" class="space-y-6">
+                                <div class="rounded-md -space-y-px">
+                                    <div>
+                                        <label for="ro" class="block text-sm font-medium text-gray-700">Conc. of anti microbial dosage administered (R₀) (mg/kg)</label>
+                                        <input id="ro" name="ro" type="number" step="any" required class="mt-1 focus-ring block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3" placeholder="e.g., 1.0">
+                                    </div>
+                                     <div class="pt-4">
+                                        <label for="ao" class="block text-sm font-medium text-gray-700">Previous Session Residue (A₀) (mg/kg)</label>
+                                        <input id="ao" name="ao" type="number" step="any" required class="mt-1 focus-ring block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3" placeholder="e.g., 0.1">
+                                    </div>
+                                     <div class="pt-4">
+                                        <label for="antimicrobial" class="block text-sm font-medium text-gray-700">Antimicrobial</label>
+                                        <select id="antimicrobial" name="antimicrobial" required class="mt-1 focus-ring block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                            </select>
+                                    </div>
+                                    <div class="pt-4">
+                                        <label for="ko" class="block text-sm font-medium text-gray-700">Decay Constant (K₀) (day⁻¹)</label>
+                                        <input id="ko" name="ko" type="number" step="any" required class="mt-1 focus-ring block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3" placeholder="Enter a value">
+                                        <p id="ko-hint" class="mt-1 text-xs text-gray-500"></p>
+                                    </div>
+                                    <div class="pt-4">
+                                        <label for="w1" class="block text-sm font-medium text-gray-700">Input W₁ for G(t) (kg)</label>
+                                        <input id="w1" name="w1" type="number" step="any" required class="mt-1 focus-ring block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3" placeholder="e.g., 1.2">
+                                    </div>
+                                     <div class="pt-4">
+                                        <label for="w2" class="block text-sm font-medium text-gray-700">Input W₂ for G(t) (kg)</label>
+                                        <input id="w2" name="w2" type="number" step="any" required class="mt-1 focus-ring block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3" placeholder="e.g., 3.6">
+                                    </div>
+                                     <div class="pt-4">
+                                        <label for="t" class="block text-sm font-medium text-gray-700">Time (t) in days</label>
+                                        <input id="t" name="t" type="number" step="any" required class="mt-1 focus-ring block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3" placeholder="e.g., 10">
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                    Calculate Concentration of Residue
+                                </button>
+                            </form>
+                             <div class="mt-4">
+                                 <button type="button" id="resetTab2" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors" style="display: none;">
+                                     Unlock & Reset Fields
+                                 </button>
+                            </div>
+                            <div id="result-container" class="hidden pt-6">
+                                <h2 class="text-xl font-semibold text-gray-800 text-center">Result</h2>
+                                <div id="result-box" class="mt-2 p-6 bg-green-50 border border-green-200 rounded-lg text-center">
+                                     <p id="result-label" class="text-sm text-green-700">The Concentration of residue R(t) is:</p>
+                                     <p id="result" class="text-3xl font-bold text-green-900"></p>
+                                </div>
+                                <div id="mrl-warning" class="hidden mt-4 p-4 bg-red-50 border border-red-300 rounded-lg text-center text-red-800">
+                                    <p class="font-bold">MRL Warning!</p>
+                                    <p id="mrl-message"></p>
+                                </div>
+                                <div id="error-message" class="mt-2 p-4 bg-red-50 border border-red-200 rounded-lg text-center text-red-700 hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <div id="dashboard-report-container" class="mt-8 min-h-[40vh]">
+                       <div id="dashboard-report-area" class="hidden">
+                        <header class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
+                            <div>
+                                 <h2 id="culture-report-title-dashboard" class="text-2xl font-bold text-gray-800"></h2>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <button id="createNewCultureReportBtnDashboard" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+                                    Create New Report
+                                </button>
+                            </div>
+                        </header>
+                        <div id="culture-report-list-dashboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            </div>
+                    </div>
+                       <div id="dashboard-placeholder" class="flex items-center justify-center h-full text-center py-16 text-gray-400">
+                           <p>Select a culture type above to view reports.</p>
+                       </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="farmer-management-section" class="hidden p-4 sm:p-6 lg:p-8">
+             <div class="container mx-auto max-w-6xl">
+                <header class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">AMU & MRL Management</h1>
+                            <p class="text-gray-500 mt-2">A comprehensive form for antimicrobial usage estimation at the farm level.</p>
+                        </div>
+                        <button onclick="showFarmerSection('farmer-dashboard-section'); viewCultureReports(currentCultureType);" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                            Back to Reports
+                        </button>
+                    </div>
+                </header>
+                <form id="farmerAmuForm" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg space-y-8">
+                    <fieldset class="border-b-2 border-blue-100 pb-6">
+                        <legend class="text-xl font-semibold text-gray-700 mb-4">1. General Information</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                             <div>
+                                <label for="animalId" class="block text-sm font-medium text-gray-600 mb-1">Animal ID*</label>
+                                <input type="text" id="animalId" name="animalId" pattern="\d*" title="Please enter numbers only." placeholder="Numbers only" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required>
+                            </div>
+                            <div>
+                                <label for="animalType" class="block text-sm font-medium text-gray-600 mb-1">Animal Type*</label>
+                                <input type="text" id="animalType" name="animalType" placeholder="e.g., Rohu, Catla, Shrimp" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required>
+                            </div>
+                            <div>
+                                <label for="animalPen" class="block text-sm font-medium text-gray-600 mb-1">Animal Pen*</label>
+                                <input type="text" id="animalPen" name="animalPen" placeholder="e.g., Pen-A, Cage-3" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required>
+                            </div>
+                        </div>
+                    </fieldset>
+                     <fieldset class="border-b-2 border-blue-100 pb-6">
+                        <legend class="text-xl font-semibold text-gray-700 mb-4">2. Feed-Based AMU</legend>
+                        <div id="farmer-feed-amu-container" class="space-y-6"></div>
+                        <button type="button" id="farmerAddFeedBtn" class="mt-4 flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 transition bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" /></svg>
+                            Add Medicated Feed Record
+                        </button>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="text-xl font-semibold text-gray-700 mb-4">3. Other AMU Sources</legend>
+                        <div id="farmer-other-amu-container" class="space-y-6"></div>
+                         <button type="button" id="farmerAddOtherSourceBtn" class="mt-4 flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 transition bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" /></svg>
+                            Add Other AMU Record
+                        </button>
+                    </fieldset>
+                    <div class="flex justify-end pt-6">
+                        <button type="submit" class="w-full md:w-auto bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">Submit Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="report-view-section" class="hidden p-4 sm:p-6 lg:p-8">
+            <div class="container mx-auto max-w-4xl">
+                 <header class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">Report Details</h1>
+                        </div>
+                        <button id="backToCultureReportsBtn" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                            Back to Reports
+                        </button>
+                    </div>
+                </header>
+                <div id="report-details-content" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg space-y-6">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="vet-portal-page" class="hidden">
+        
+        <div id="vet-login-section" class="min-h-screen flex items-center justify-center p-4">
+            <div class="max-w-xl w-full relative">
+                 <button onclick="showSection('main-portal-page')" title="Go back" class="absolute top-4 left-4 text-gray-400 hover:text-gray-600 transition p-2 rounded-full hover:bg-gray-100 z-10">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <form id="vetLoginForm" class="bg-white p-8 pt-16 rounded-2xl shadow-lg space-y-6">
+                    <header class="text-center mb-4">
+                        <h1 class="text-3xl font-bold text-gray-800">Veterinarian Login</h1>
+                        <p class="text-gray-500 mt-2">Please enter your credentials to continue.</p>
+                    </header>
+                    <div>
+                        <label for="vetLicense" class="block text-sm font-medium text-gray-600 mb-1">License Number*</label>
+                        <input type="text" id="vetLicense" name="vetLicense" placeholder="Enter your license number" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required value="VET-12345">
+                    </div>
+                     <div>
+                        <label for="vetPassword" class="block text-sm font-medium text-gray-600 mb-1">Password*</label>
+                        <input type="password" id="vetPassword" name="vetPassword" placeholder="Enter your password" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required value="password123">
+                    </div>
+                    <div class="flex items-center justify-end pt-4">
+                         <div>
+                             <p id="vet-login-error" class="text-red-500 text-sm mr-4 hidden"></p>
+                            <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+                                Login
+                            </button>
+                         </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="vet-dashboard-section" class="hidden min-h-screen p-4 sm:p-6 lg:p-8">
+            <div class="container mx-auto max-w-7xl relative">
+                <div id="vet-profile-header" class="bg-white p-6 rounded-2xl shadow-lg mb-8">
+                    </div>
+
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Registered Farms</h2>
+                <div id="farm-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    </div>
+            </div>
+             <button onclick="showSection('main-portal-page')" title="Back to Main Portal" class="fixed bottom-8 right-8 bg-blue-500 hover:bg-blue-600 text-white transition p-4 rounded-full shadow-lg z-10">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            </button>
+        </div>
+
+        <div id="vet-farm-reports-section" class="hidden min-h-screen p-4 sm:p-6 lg:p-8">
+            <div class="container mx-auto max-w-6xl">
+                 <header class="flex justify-between items-center mb-8">
+                    <div>
+                         <h1 id="farm-report-title" class="text-3xl font-bold text-gray-800"></h1>
+                         <p class="text-gray-500 mt-2">View existing reports or file a new one for this farm.</p>
+                    </div>
+                    <div>
+                        <button onclick="showVetSection('vet-dashboard-section')" class="text-sm font-medium text-gray-600 hover:text-gray-800 transition mr-4"> &larr; Back to Dashboard</button>
+                        <button id="fileNewVetReportBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                            File New Report
+                        </button>
+                    </div>
+                </header>
+                <div id="vet-report-list" class="space-y-4">
+                    </div>
+            </div>
+        </div>
+        
+        <div id="vet-management-section" class="hidden p-4 sm:p-6 lg:p-8">
+            <div class="container mx-auto max-w-4xl">
+                <header class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">Veterinary Aquaculture Prescription</h1>
+                            <p class="text-gray-500 mt-2">File a new prescription and report for the selected farm.</p>
+                        </div>
+                        <button id="backToFarmReportsBtn" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                            Back to Farm Reports
+                        </button>
+                    </div>
+                </header>
+                <form id="vetVisitForm" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg space-y-8">
+                    <div id="vet-form-farm-details"></div>
+
+                    <fieldset class="border-t-2 border-blue-100 pt-6">
+                        <legend class="text-xl font-semibold text-gray-700 mb-4">Clinical Assessment</legend>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="vetReason" class="block text-sm font-medium text-gray-600">Chief Complaint (Farmer's Report)*</label>
+                                <textarea id="vetReason" name="vetReason" rows="2" class="mt-1 w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" placeholder="e.g., Sudden mortalities, reduced feeding, lesions..." required></textarea>
+                            </div>
+                            <div>
+                                <label for="vetHistory" class="block text-sm font-medium text-gray-600">History of Present Problem</label>
+                                <textarea id="vetHistory" name="vetHistory" rows="3" class="mt-1 w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" placeholder="When did it start? Mortality rate? Recent changes? Previous treatments?"></textarea>
+                            </div>
+                            <div>
+                                <label for="vetNotes" class="block text-sm font-medium text-gray-600">Examination (Vet's Notes)</label>
+                                <textarea id="vetNotes" name="vetNotes" rows="4" class="mt-1 w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" placeholder="Physical observation, behavior, lesions, gills, sample testing results..."></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="vetProvisionalDiagnosis" class="block text-sm font-medium text-gray-600">Provisional Diagnosis</label>
+                                    <input type="text" id="vetProvisionalDiagnosis" name="vetProvisionalDiagnosis" class="mt-1 w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition">
+                                </div>
+                                <div>
+                                    <label for="vetConfirmedDiagnosis" class="block text-sm font-medium text-gray-600">Confirmed Diagnosis (if available)</label>
+                                    <input type="text" id="vetConfirmedDiagnosis" name="vetConfirmedDiagnosis" class="mt-1 w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="border-t-2 border-blue-100 pt-6">
+                        <legend class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                             <div class="text-3xl font-serif text-blue-500 mr-2">&#x211E;</div>
+                            Prescription
+                        </legend>
+                        <div id="prescription-container" class="space-y-4">
+                            </div>
+                        <button type="button" id="addPrescriptionBtn" class="mt-4 flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 transition bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" /></svg>
+                            Add Prescription Item
+                        </button>
+                    </fieldset>
+
+                    <fieldset class="border-t-2 border-blue-100 pt-6">
+                        <legend class="text-xl font-semibold text-gray-700 mb-4">Advice & Follow-up</legend>
+                         <div class="space-y-4">
+                            <div>
+                                <label for="vetWithdrawalPeriod" class="block text-sm font-medium text-gray-600">Withdrawal Period</label>
+                                <input type="text" id="vetWithdrawalPeriod" name="vetWithdrawalPeriod" placeholder="e.g., 15 days" class="mt-1 w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition">
+                            </div>
+                            <div>
+                                <label for="vetFollowUp" class="block text-sm font-medium text-gray-600">Preventive Measures / Advice</label>
+                                <textarea id="vetFollowUp" name="vetFollowUp" rows="4" class="mt-1 w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" placeholder="Improve aeration, reduce stocking density, regular water quality monitoring..."></textarea>
+                            </div>
+                        </div>
+                    </fieldset>
+                    
+                    <div class="flex justify-end pt-6">
+                        <button type="submit" class="w-full md:w-auto bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">Submit Prescription</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="vet-report-view-section" class="hidden p-4 sm:p-6 lg:p-8">
+            <div class="container mx-auto max-w-4xl">
+                 <header class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                             <h1 id="vet-report-detail-title" class="text-3xl font-bold text-gray-800">Visit Prescription & Report</h1>
+                        </div>
+                        <button onclick="viewFarmReports(currentFarmId)" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                            Back to Farm Reports
+                        </button>
+                    </div>
+                </header>
+                <div id="vet-report-details-content">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="government-portal-page" class="hidden">
+        
+        <div id="government-login-section" class="min-h-screen flex items-center justify-center p-4">
+            <div class="max-w-xl w-full relative">
+                 <button onclick="showSection('main-portal-page')" title="Go back" class="absolute top-4 left-4 text-gray-400 hover:text-gray-600 transition p-2 rounded-full hover:bg-gray-100 z-10">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <form id="govLoginForm" class="bg-white p-8 pt-16 rounded-2xl shadow-lg space-y-6">
+                    <header class="text-center mb-4">
+                        <h1 class="text-3xl font-bold text-gray-800">Government Official Login</h1>
+                        <p class="text-gray-500 mt-2">Please enter your credentials to continue.</p>
+                    </header>
+                    <div>
+                        <label for="govId" class="block text-sm font-medium text-gray-600 mb-1">Official ID*</label>
+                        <input type="text" id="govId" name="govId" placeholder="Enter your official ID" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required value="GOV-ADMIN">
+                    </div>
+                     <div>
+                        <label for="govPassword" class="block text-sm font-medium text-gray-600 mb-1">Password*</label>
+                        <input type="password" id="govPassword" name="govPassword" placeholder="Enter your password" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 transition" required value="password123">
+                    </div>
+                    <div class="flex items-center justify-end pt-4">
+                         <div>
+                            <p id="gov-login-error" class="text-red-500 text-sm mr-4 hidden"></p>
+                            <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+                                Login
+                            </button>
+                         </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="government-dashboard-section" class="hidden min-h-screen p-4 sm:p-6 lg:p-8">
+            <div class="container mx-auto max-w-7xl relative">
+                <button onclick="showSection('main-portal-page')" title="Back to Main Portal" class="absolute top-0 left-0 text-gray-400 hover:text-gray-600 transition p-2 rounded-full hover:bg-gray-100 z-10">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                </button>
+                <header class="text-center mb-12">
+                     <h1 class="text-3xl font-bold text-gray-800">Government Dashboard</h1>
+                     <p class="text-gray-500 mt-2">Aggregated data from all registered farms and veterinarians.</p>
+                </header>
+
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Farmer Submitted Data</h2>
+                    <div id="all-farmer-reports-container" class="bg-white p-6 rounded-2xl shadow-lg overflow-x-auto">
+                        </div>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Veterinarian Reports</h2>
+                    <div id="all-vet-reports-container" class="bg-white p-6 rounded-2xl shadow-lg overflow-x-auto">
+                        </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-8 shadow-2xl max-w-sm text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Success!</h3>
+            <div class="mt-2 px-7 py-3">
+                <p id="successMessage" class="text-sm text-gray-500"></p>
+            </div>
+            <div class="mt-4">
+                <button id="closeModalBtn" class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Globals ---
+        const API_URL = 'http://localhost:3000';
+        let currentFarmId = null;
+        let currentVetProfile = null;
+        let currentCultureType = null;
+
+        // --- Helper Functions ---
+        const createLoader = () => `<div class="flex justify-center items-center p-8"><div class="loader"></div></div>`;
+
+        // --- Portal & Section Navigation ---
+        function showSection(sectionId) {
+            document.querySelectorAll('body > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function showFarmerSection(farmerSectionId) {
+            document.querySelectorAll('#farmer-portal-page > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById(farmerSectionId).classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+        
+        function showVetSection(vetSectionId) {
+            document.querySelectorAll('#vet-portal-page > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById(vetSectionId).classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function showGovSection(govSectionId) {
+            document.querySelectorAll('#government-portal-page > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById(govSectionId).classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        // --- Farmer Dashboard ---
+        function resetFarmerDashboardView() {
+            document.getElementById('dashboard-placeholder').classList.remove('hidden');
+            document.getElementById('dashboard-report-area').classList.add('hidden');
+        }
+
+        async function viewCultureReports(cultureType) {
+            currentCultureType = cultureType;
+            
+            document.getElementById('dashboard-placeholder').classList.add('hidden');
+            const reportArea = document.getElementById('dashboard-report-area');
+            reportArea.classList.remove('hidden');
+            reportArea.classList.add('fade-in');
+
+            const titleMap = {
+                'freshwater': 'Freshwater Pond Culture Reports',
+                'brackishwater': 'Brackishwater Shrimp Farming Reports',
+                'mariculture': 'Other Coastal Culture Reports'
+            };
+            document.getElementById('culture-report-title-dashboard').textContent = titleMap[cultureType];
+
+            const cultureReportList = document.getElementById('culture-report-list-dashboard');
+            cultureReportList.innerHTML = createLoader();
+            
+            try {
+                const response = await fetch(`${API_URL}/farmerReports?cultureType=${cultureType}&_sort=submissionDate&_order=desc`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const reports = await response.json();
+                
+                cultureReportList.innerHTML = '';
+                if (reports.length === 0) {
+                    cultureReportList.innerHTML = `<p class="text-gray-500 col-span-full text-center py-8">No reports found for this culture type. Create your first one!</p>`;
+                } else {
+                    reports.forEach(report => {
+                        const reportCard = `
+                            <div class="report-card bg-white p-6 rounded-xl shadow-md cursor-pointer" onclick="viewReport(${report.id})">
+                                <div class="flex justify-between items-start">
+                                    <h3 class="text-lg font-bold text-gray-800">Report for: ${report.general.animalType} (ID: ${report.general.animalId})</h3>
+                                    <span class="text-xs bg-blue-100 text-blue-800 font-medium px-2.5 py-0.5 rounded-full">${report.general.animalPen}</span>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-4">Submitted: ${report.submissionDate}</p>
+                            </div>`;
+                        cultureReportList.insertAdjacentHTML('beforeend', reportCard);
+                    });
+                }
+            } catch (error) {
+                cultureReportList.innerHTML = `<p class="text-red-500 col-span-full text-center py-8">Error fetching reports. Please try again.</p>`;
+                console.error("Fetch Error:", error);
+            }
+        }
+
+        // --- View Farmer Report ---
+        async function viewReport(reportId) {
+            const reportDetailsContent = document.getElementById('report-details-content');
+            reportDetailsContent.innerHTML = createLoader();
+            showFarmerSection('report-view-section');
+
+            try {
+                const response = await fetch(`${API_URL}/farmerReports/${reportId}`);
+                if (!response.ok) throw new Error('Report not found');
+                const report = await response.json();
+
+                document.getElementById('backToCultureReportsBtn').onclick = () => {
+                    showFarmerSection('farmer-dashboard-section');
+                    viewCultureReports(report.cultureType);
+                };
+
+                let detailsHtml = `
+                    <div class="border-b pb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">General Information</h3>
+                        <p class="mt-2 text-gray-600"><strong>Animal ID:</strong> ${report.general.animalId}</p>
+                        <p class="text-gray-600"><strong>Animal Type:</strong> ${report.general.animalType}</p>
+                        <p class="text-gray-600"><strong>Animal Pen:</strong> ${report.general.animalPen}</p>
+                        <p class="text-sm text-gray-400 mt-1"><strong>Submitted On:</strong> ${report.submissionDate}</p>
+                    </div>`;
+                
+                detailsHtml += `<div class="border-b pb-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 mt-4">Feed-Based AMU</h3>
+                                    ${report.feedAmu.length > 0 ? report.feedAmu.map(f => `<div class="mt-2 p-3 bg-gray-50 rounded-lg"><p><strong>Feed:</strong> ${f.feedName}</p><p><strong>Antimicrobial:</strong> ${f.amu}</p><p><strong>Dosage:</strong> ${f.dosage}</p><p><strong>Start Date:</strong> ${f.startDate}</p></div>`).join('') : '<p class="text-gray-500 mt-2">No feed-based AMU recorded.</p>'}
+                                </div>`;
+
+                detailsHtml += `<div>
+                                    <h3 class="text-lg font-semibold text-gray-800 mt-4">Other AMU Sources</h3>
+                                    ${report.otherAmu.length > 0 ? report.otherAmu.map(o => `<div class="mt-2 p-3 bg-gray-50 rounded-lg"><p><strong>Source:</strong> ${o.sourceType}</p><p><strong>Antimicrobial:</strong> ${o.amu}</p><p><strong>Dosage:</strong> ${o.dosage}</p><p><strong>Application Date:</strong> ${o.appDate}</p></div>`).join('') : '<p class="text-gray-500 mt-2">No other AMU sources recorded.</p>'}
+                                </div>`;
+
+                reportDetailsContent.innerHTML = detailsHtml;
+            } catch (error) {
+                reportDetailsContent.innerHTML = `<p class="text-red-500 text-center py-8">Error fetching report details.</p>`;
+                console.error("Fetch Error:", error);
+            }
+        }
+
+        // --- Vet Portal ---
+        async function renderVetDashboard() {
+            const profileHeader = document.getElementById('vet-profile-header');
+            const farmListContainer = document.getElementById('farm-list');
+            profileHeader.innerHTML = createLoader();
+            farmListContainer.innerHTML = createLoader();
+
+            try {
+                // Fetch vet profile and farms in parallel
+                const [vetResponse, farmsResponse] = await Promise.all([
+                    fetch(`${API_URL}/vets/1`), // Hardcoding vet with ID 1 for this example
+                    fetch(`${API_URL}/farms`)
+                ]);
+                if (!vetResponse.ok || !farmsResponse.ok) throw new Error('Failed to load dashboard data');
+
+                const vetProfile = await vetResponse.json();
+                const farms = await farmsResponse.json();
+                currentVetProfile = vetProfile; // Store for later use
+
+                profileHeader.innerHTML = `
+                    <div class="flex flex-col md:flex-row items-start gap-6">
+                        <div class="bg-blue-500 text-white rounded-full h-20 w-20 flex items-center justify-center text-3xl font-bold flex-shrink-0">${vetProfile.name.match(/\b(\w)/g).join('')}</div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">${vetProfile.name}</h1>
+                            <p class="text-gray-600 font-medium">${vetProfile.clinic} | License: ${vetProfile.license}</p>
+                            <p class="text-sm text-gray-500 mt-2">${vetProfile.contact}</p>
+                            <p class="text-sm text-gray-500">${vetProfile.address}</p>
+                        </div>
+                    </div>`;
+                
+                farmListContainer.innerHTML = '';
+                farms.forEach(farm => {
+                    const farmCard = `
+                        <div class="farm-card bg-white p-6 rounded-xl shadow-md cursor-pointer" onclick="viewFarmReports(${farm.id})">
+                            <h3 class="text-xl font-bold text-gray-800">${farm.farmName}</h3>
+                            <p class="text-gray-600">${farm.location || 'Location not specified'}</p>
+                            <p class="text-sm bg-yellow-100 text-yellow-800 font-medium px-2.5 py-0.5 rounded-full inline-block mt-4">${farm.primarySpecies || 'N/A'}</p>
+                        </div>`;
+                    farmListContainer.insertAdjacentHTML('beforeend', farmCard);
+                });
+
+            } catch(error) {
+                profileHeader.innerHTML = `<p class="text-red-500 text-center py-4">Could not load profile.</p>`;
+                farmListContainer.innerHTML = `<p class="text-red-500 text-center py-4">Could not load farms.</p>`;
+                console.error("Dashboard Load Error:", error);
+            }
+        }
+
+        async function viewFarmReports(farmId) {
+            currentFarmId = farmId;
+            showVetSection('vet-farm-reports-section');
+            const reportListContainer = document.getElementById('vet-report-list');
+            reportListContainer.innerHTML = createLoader();
+            
+            try {
+                const [farmResponse, reportsResponse] = await Promise.all([
+                    fetch(`${API_URL}/farms/${farmId}`),
+                    fetch(`${API_URL}/vetReports?farmId=${farmId}&_sort=visitDate&_order=desc`)
+                ]);
+                if (!farmResponse.ok || !reportsResponse.ok) throw new Error('Failed to load farm report data');
+
+                const farm = await farmResponse.json();
+                const reportsForFarm = await reportsResponse.json();
+
+                document.getElementById('farm-report-title').textContent = `Reports for ${farm.farmName}`;
+                
+                reportListContainer.innerHTML = '';
+                if (reportsForFarm.length === 0) {
+                    reportListContainer.innerHTML = `<p class="text-center text-gray-500 bg-white p-8 rounded-lg shadow">No reports filed for this farm yet.</p>`;
+                } else {
+                     reportsForFarm.forEach(report => {
+                        const reportHtml = `
+                            <div class="report-card bg-white p-4 rounded-lg shadow cursor-pointer" onclick="viewVetReport(${report.id})">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-bold text-lg text-gray-700">${report.reason}</h4>
+                                    <span class="text-sm text-gray-500">Visited: ${report.visitDate}</span>
+                                </div>
+                            </div>`;
+                        reportListContainer.insertAdjacentHTML('beforeend', reportHtml);
+                    });
+                }
+            } catch (error) {
+                reportListContainer.innerHTML = `<p class="text-red-500 text-center py-8">Error fetching farm reports.</p>`;
+                console.error("Fetch Error:", error);
+            }
+        }
+        
+        async function viewVetReport(reportId) {
+            showVetSection('vet-report-view-section');
+            const reportDetailsContainer = document.getElementById('vet-report-details-content');
+            reportDetailsContainer.innerHTML = createLoader();
+
+            try {
+                const reportResponse = await fetch(`${API_URL}/vetReports/${reportId}`);
+                if (!reportResponse.ok) throw new Error('Report not found');
+                const report = await reportResponse.json();
+
+                const [farmResponse, vetResponse] = await Promise.all([
+                    fetch(`${API_URL}/farms/${report.farmId}`),
+                    fetch(`${API_URL}/vets/1`) // Assuming a single vet for simplicity
+                ]);
+                 if (!farmResponse.ok || !vetResponse.ok) throw new Error('Could not load related data');
+
+                const farm = await farmResponse.json();
+                const vetProfile = await vetResponse.json();
+
+                document.getElementById('vet-report-detail-title').textContent = `Veterinary Aquaculture Prescription`;
+
+                const prescriptionRows = report.prescription.length > 0 
+                    ? report.prescription.map(p => `
+                        <tr class="border-b border-gray-200">
+                            <td class="py-2 px-3">${p.medicine}</td>
+                            <td class="py-2 px-3">${p.dosage}</td>
+                            <td class="py-2 px-3">${p.route}</td>
+                            <td class="py-2 px-3">${p.frequency}</td>
+                            <td class="py-2 px-3">${p.duration}</td>
+                            <td class="py-2 px-3">${p.remarks}</td>
+                        </tr>`).join('')
+                    : `<tr><td colspan="6" class="text-center py-4 text-gray-500">No medication prescribed.</td></tr>`;
+
+                reportDetailsContainer.innerHTML = `
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
+                        <div class="text-center border-b-2 border-gray-200 pb-4 mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">${vetProfile.clinic}</h2>
+                            <p class="text-gray-600">Dr. ${vetProfile.name} (Reg. No. / License ID: ${vetProfile.license})</p>
+                            <p class="text-sm text-gray-500">Date: ${report.visitDate}</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="font-bold text-lg text-gray-700 border-b pb-2 mb-3">Farmer & Farm Details</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                                <p><strong>Farmer Name:</strong> ${farm.farmerName}</p>
+                                <p><strong>Farm Name / ID:</strong> ${farm.farmName}</p>
+                                <p><strong>Address:</strong> ${farm.address}</p>
+                                <p><strong>Contact:</strong> ${farm.phone}</p>
+                                <p><strong>Species Cultured:</strong> ${farm.primarySpecies}</p>
+                                <p><strong>Pond/Unit ID:</strong> ${farm.pondId || 'N/A'} | <strong>Pond Size:</strong> ${farm.pondSize || 'N/A'} | <strong>Stocking Density:</strong> ${farm.stockingDensity || 'N/A'}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4 mb-6 text-sm">
+                            <div><strong class="font-medium text-gray-800">Chief Complaint (Farmer’s Report):</strong> <span class="text-gray-600">${report.reason}</span></div>
+                            <div><strong class="font-medium text-gray-800">History of Present Problem:</strong> <p class="text-gray-600 whitespace-pre-wrap pl-4">${report.historyOfProblem || 'N/A'}</p></div>
+                            <div><strong class="font-medium text-gray-800">Examination (Vet’s Notes):</strong> <p class="text-gray-600 whitespace-pre-wrap pl-4">${report.notes || 'N/A'}</p></div>
+                            <div><strong class="font-medium text-gray-800">Provisional Diagnosis:</strong> <span class="text-gray-600">${report.provisionalDiagnosis || 'N/A'}</span></div>
+                            <div><strong class="font-medium text-gray-800">Confirmed Diagnosis:</strong> <span class="text-gray-600">${report.confirmedDiagnosis || 'N/A'}</span></div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="font-bold text-lg text-gray-700 border-b pb-2 mb-3 flex items-center">
+                                <div class="text-3xl font-serif text-blue-500 mr-2">&#x211E;</div>
+                                Prescription
+                            </h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="bg-gray-50 text-xs text-gray-600 uppercase">
+                                        <tr>
+                                            <th class="py-2 px-3">Medicine / Chemical</th>
+                                            <th class="py-2 px-3">Dosage</th>
+                                            <th class="py-2 px-3">Route</th>
+                                            <th class="py-2 px-3">Frequency</th>
+                                            <th class="py-2 px-3">Duration</th>
+                                            <th class="py-2 px-3">Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${prescriptionRows}</tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 mb-6 text-sm">
+                            <div><strong class="font-medium text-gray-800">Withdrawal Period:</strong> <span class="text-gray-600">Fish/Harvest should not be sold before ${report.withdrawalPeriod} after treatment.</span></div>
+                            <div><strong class="font-medium text-gray-800">Preventive Measures / Advice:</strong> <p class="text-gray-600 whitespace-pre-wrap pl-4">${report.followUp}</p></div>
+                        </div>
+
+                        <div class="mt-16 pt-8 flex justify-end">
+                            <div class="w-full md:w-1/2 text-center">
+                                <div class="border-t-2 border-gray-400 pt-2">
+                                    <p class="text-sm text-gray-600">Vet’s Signature</p>
+                                    <p class="font-semibold text-gray-800">${vetProfile.name} & Reg. No.: ${vetProfile.license}</p>
+                                    <p class="text-xs text-gray-500">Contact: ${vetProfile.contact.split(' | ')[0]}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch(error) {
+                reportDetailsContainer.innerHTML = `<p class="text-red-500 text-center py-8">Error fetching report details.</p>`;
+                console.error("Fetch Error:", error);
+            }
+        }
+
+        // --- Government Portal ---
+        async function renderGovDashboard() {
+            const farmerContainer = document.getElementById('all-farmer-reports-container');
+            const vetContainer = document.getElementById('all-vet-reports-container');
+            farmerContainer.innerHTML = createLoader();
+            vetContainer.innerHTML = createLoader();
+
+            try {
+                const [farmerReportsRes, vetReportsRes, farmsRes] = await Promise.all([
+                    fetch(`${API_URL}/farmerReports`),
+                    fetch(`${API_URL}/vetReports`),
+                    fetch(`${API_URL}/farms`)
+                ]);
+                if (!farmerReportsRes.ok || !vetReportsRes.ok || !farmsRes.ok) throw new Error("Failed to fetch all data for dashboard");
+
+                const farmerReports = await farmerReportsRes.json();
+                const vetReports = await vetReportsRes.json();
+                const farms = await farmsRes.json();
+                const farmsMap = new Map(farms.map(f => [f.id, f]));
+
+                // Render Farmer Reports Table
+                let farmerTable = `<table class="w-full text-sm text-left text-gray-500"><thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr><th scope="col" class="px-6 py-3">Submission Date</th><th scope="col" class="px-6 py-3">Culture Type</th><th scope="col" class="px-6 py-3">Animal Type</th><th scope="col" class="px-6 py-3">Animal ID</th><th scope="col" class="px-6 py-3">Pen / Unit</th></tr></thead><tbody>`;
+                farmerReports.forEach(r => {
+                    farmerTable += `<tr class="bg-white border-b hover:bg-gray-50"><td class="px-6 py-4">${r.submissionDate}</td><td class="px-6 py-4 capitalize">${r.cultureType}</td><td class="px-6 py-4">${r.general.animalType}</td><td class="px-6 py-4">${r.general.animalId}</td><td class="px-6 py-4">${r.general.animalPen}</td></tr>`;
+                });
+                farmerTable += `</tbody></table>`;
+                if (farmerReports.length === 0) farmerTable = `<p class="text-center text-gray-500 py-4">No farmer data submitted yet.</p>`;
+                farmerContainer.innerHTML = farmerTable;
+
+                // Render Vet Reports Table
+                let vetTable = `<table class="w-full text-sm text-left text-gray-500"><thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr><th scope="col" class="px-6 py-3">Visit Date</th><th scope="col" class="px-6 py-3">Farm Name</th><th scope="col" class="px-6 py-3">Farmer Name</th><th scope="col" class="px-6 py-3">Reason for Visit</th></tr></thead><tbody>`;
+                vetReports.forEach(r => {
+                    const farm = farmsMap.get(r.farmId) || {};
+                    vetTable += `<tr class="bg-white border-b hover:bg-gray-50"><td class="px-6 py-4">${r.visitDate}</td><td class="px-6 py-4">${farm.farmName || 'N/A'}</td><td class="px-6 py-4">${farm.farmerName || 'N/A'}</td><td class="px-6 py-4">${r.reason}</td></tr>`;
+                });
+                vetTable += `</tbody></table>`;
+                 if (vetReports.length === 0) vetTable = `<p class="text-center text-gray-500 py-4">No veterinarian reports filed yet.</p>`;
+                vetContainer.innerHTML = vetTable;
+
+            } catch(error) {
+                farmerContainer.innerHTML = `<p class="text-red-500 text-center py-4">Could not load farmer data.</p>`;
+                vetContainer.innerHTML = `<p class="text-red-500 text-center py-4">Could not load veterinarian data.</p>`;
+                console.error("Gov Dashboard Load Error:", error);
+            }
+        }
+
+
+        // --- Shared Functions & Elements ---
+        const successModal = document.getElementById('successModal');
+        const successMessage = document.getElementById('successMessage');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        
+        closeModalBtn.addEventListener('click', () => { successModal.style.display = 'none'; });
+        
+        function handleDosageInput(event) {
+            if (event.target.classList.contains('dosage-input')) {
+                const input = event.target;
+                const warning = input.nextElementSibling;
+                const value = parseFloat(input.value);
+                warning.classList.toggle('hidden', isNaN(value) || value <= 0.1);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Farmer Portal Logic ---
+            document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const errorEl = document.getElementById('registration-error');
+                errorEl.classList.add('hidden');
+                const newFarm = {
+                    farmName: document.getElementById('regFarmName').value,
+                    address: document.getElementById('regAddress').value,
+                    farmerName: document.getElementById('regFarmerName').value,
+                    phone: document.getElementById('regPhone').value,
+                    aadhar: document.getElementById('regAadhar').value
+                };
+
+                try {
+                    const response = await fetch(`${API_URL}/farms`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newFarm)
+                    });
+                    if (!response.ok) throw new Error('Registration failed.');
+                    const savedFarm = await response.json();
+                    currentFarmId = savedFarm.id;
+                    showFarmerSection('farmer-dashboard-section');
+                    resetFarmerDashboardView();
+                } catch(error) {
+                    errorEl.textContent = 'Registration failed. Please try again.';
+                    errorEl.classList.remove('hidden');
+                    console.error("Registration Error:", error);
+                }
+            });
+
+            document.getElementById('createNewCultureReportBtnDashboard').addEventListener('click', () => {
+                document.getElementById('farmerAmuForm').reset();
+                document.getElementById('farmer-feed-amu-container').innerHTML = '';
+                document.getElementById('farmer-other-amu-container').innerHTML = '';
+                addFarmerFeedEntry();
+                addFarmerOtherSourceEntry();
+                showFarmerSection('farmer-management-section');
+            });
+            
+            const farmerForm = document.getElementById('farmerAmuForm');
+            const farmerFeedContainer = document.getElementById('farmer-feed-amu-container');
+            let farmerFeedCount = 0;
+            const farmerOtherContainer = document.getElementById('farmer-other-amu-container');
+            let farmerOtherSourceCount = 0;
+
+            function addFarmerFeedEntry() {
+                farmerFeedCount++;
+                const html = `<div class="p-4 border border-gray-200 rounded-lg bg-white fade-in" data-type="feed-entry"><h4 class="font-medium text-gray-800 mb-4">Medicated Feed Record #${farmerFeedCount}</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="text-sm text-gray-600">Feed Name/Code</label><input type="text" data-field="feedName" class="w-full mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md"></div><div><label class="text-sm text-gray-600">Antimicrobial Used</label><input type="text" data-field="amu" class="w-full mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md"></div><div><label class="text-sm text-gray-600">Dosage (e.g., mg/kg)</label><input type="text" data-field="dosage" class="dosage-input w-full mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md"><p class="text-red-500 text-xs mt-1 hidden">Warning: Value is above the recommended limit of 0.1.</p></div><div><label class="text-sm text-gray-600">Application Start Date</label><input type="date" data-field="startDate" class="w-full mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md"></div></div></div>`;
+                farmerFeedContainer.insertAdjacentHTML('beforeend', html);
+            }
+            
+            function addFarmerOtherSourceEntry() {
+                farmerOtherSourceCount++;
+                const html = `<div class="p-4 border border-gray-200 rounded-lg bg-white fade-in" data-type="other-entry"><h4 class="font-medium text-gray-800 mb-4">Other AMU Record #${farmerOtherSourceCount}</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="text-sm text-gray-600">Source Type</label><select data-field="sourceType" class="w-full mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md"><option>Injection</option><option>Bath Treatment</option><option>Topical</option><option>Other</option></select></div><div><label class="text-sm text-gray-600">Antimicrobial Used</label><select data-field="amu" class="w-full mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md"><option value="">Select Antimicrobial...</option><option>Oxytetracycline</option><option>Althrocin</option><option>Ampicillin</option><option>Sparfloxacin</option><option>Enrofloxacin</option><option>Acriflavine</option><option>Formalin</option><option>Potassium Permanganate</option><option>Malachite Green</option><option>Tannic Acid</option><option>Other</option></select></div><div><label class="text-sm text-gray-600">Dosage / Concentration</label><input type="text" data-field="dosage" class="dosage-input w-full mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md"><p class="text-red-500 text-xs mt-1 hidden">Warning: Value is above the recommended limit of 0.1.</p></div><div><label class="text-sm text-gray-600">Application Date</label><input type="date" data-field="appDate" class="w-full mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md"></div></div></div>`;
+                farmerOtherContainer.insertAdjacentHTML('beforeend', html);
+            }
+            
+            document.getElementById('farmerAddFeedBtn').addEventListener('click', addFarmerFeedEntry);
+            document.getElementById('farmerAddOtherSourceBtn').addEventListener('click', addFarmerOtherSourceEntry);
+            farmerFeedContainer.addEventListener('input', handleDosageInput);
+            farmerOtherContainer.addEventListener('input', handleDosageInput);
+            farmerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const newReport = { cultureType: currentCultureType, submissionDate: new Date().toISOString().split('T')[0], general: { animalId: document.getElementById('animalId').value, animalType: document.getElementById('animalType').value, animalPen: document.getElementById('animalPen').value }, feedAmu: [], otherAmu: [] };
+                document.querySelectorAll('#farmer-feed-amu-container [data-type="feed-entry"]').forEach(entry => { const record = {}; entry.querySelectorAll('[data-field]').forEach(input => record[input.dataset.field] = input.value); if(record.feedName) newReport.feedAmu.push(record); });
+                document.querySelectorAll('#farmer-other-amu-container [data-type="other-entry"]').forEach(entry => { const record = {}; entry.querySelectorAll('[data-field]').forEach(input => record[input.dataset.field] = input.value); if(record.sourceType) newReport.otherAmu.push(record); });
+                
+                try {
+                    const response = await fetch(`${API_URL}/farmerReports`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newReport)
+                    });
+                    if (!response.ok) throw new Error('Failed to submit report.');
+
+                    successMessage.textContent = 'Your AMU data has been logged successfully.';
+                    successModal.style.display = 'flex';
+                    farmerForm.reset();
+                    showFarmerSection('farmer-dashboard-section');
+                    viewCultureReports(currentCultureType);
+                } catch(error) {
+                    alert('Error submitting report. Please try again.');
+                    console.error("Submit Error:", error);
+                }
+            });
+
+            // --- Vet Portal Logic ---
+            document.getElementById('vetLoginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const license = document.getElementById('vetLicense').value;
+                const password = document.getElementById('vetPassword').value;
+                const errorEl = document.getElementById('vet-login-error');
+                errorEl.classList.add('hidden');
+                
+                try {
+                    const response = await fetch(`${API_URL}/vets?license=${license}`);
+                    const vets = await response.json();
+                    if(vets.length > 0 && vets[0].password === password) {
+                        currentVetProfile = vets[0];
+                        renderVetDashboard();
+                        showVetSection('vet-dashboard-section');
+                    } else {
+                        throw new Error("Invalid credentials");
+                    }
+                } catch (error) {
+                    errorEl.textContent = 'Invalid license number or password.';
+                    errorEl.classList.remove('hidden');
+                    console.error("Login Error:", error);
+                }
+            });
+            
+            const prescriptionContainer = document.getElementById('prescription-container');
+            
+            function addPrescriptionEntry() {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'grid grid-cols-1 lg:grid-cols-12 gap-2 p-3 border rounded-lg bg-gray-50/50 prescription-entry';
+                entryDiv.innerHTML = `
+                    <input type="text" data-field="medicine" placeholder="Medicine/Chemical" class="lg:col-span-3 w-full text-sm p-2 bg-white border border-gray-300 rounded-md">
+                    <input type="text" data-field="dosage" placeholder="Dosage" class="lg:col-span-2 w-full text-sm p-2 bg-white border border-gray-300 rounded-md">
+                    <select data-field="route" class="lg:col-span-1 w-full text-sm p-2 bg-white border border-gray-300 rounded-md">
+                        <option>Feed</option><option>Water</option><option>Bath</option>
+                    </select>
+                    <input type="text" data-field="frequency" placeholder="Frequency" class="lg:col-span-2 w-full text-sm p-2 bg-white border border-gray-300 rounded-md">
+                    <input type="text" data-field="duration" placeholder="Duration" class="lg:col-span-1 w-full text-sm p-2 bg-white border border-gray-300 rounded-md">
+                    <input type="text" data-field="remarks" placeholder="Remarks" class="lg:col-span-2 w-full text-sm p-2 bg-white border border-gray-300 rounded-md">
+                    <button type="button" class="remove-prescription-btn lg:col-span-1 bg-red-100 text-red-600 hover:bg-red-200 text-sm p-2 rounded-md transition">X</button>
+                `;
+                prescriptionContainer.appendChild(entryDiv);
+                entryDiv.querySelector('.remove-prescription-btn').addEventListener('click', () => entryDiv.remove());
+            }
+
+            document.getElementById('addPrescriptionBtn').addEventListener('click', addPrescriptionEntry);
+
+            document.getElementById('fileNewVetReportBtn').addEventListener('click', async () => {
+                const form = document.getElementById('vetVisitForm');
+                form.reset();
+                prescriptionContainer.innerHTML = '';
+                
+                const farmDetailsContainer = document.getElementById('vet-form-farm-details');
+                farmDetailsContainer.innerHTML = createLoader();
+                showVetSection('vet-management-section');
+                
+                try {
+                    const response = await fetch(`${API_URL}/farms/${currentFarmId}`);
+                    if (!response.ok) throw new Error("Could not fetch farm details.");
+                    const farm = await response.json();
+
+                    farmDetailsContainer.innerHTML = `
+                        <fieldset class="border-b-2 border-blue-100 pb-6">
+                            <legend class="text-xl font-semibold text-gray-700 mb-4">Farm Details</legend>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sm bg-blue-50 p-4 rounded-lg">
+                                <p><strong>Farmer Name:</strong> ${farm.farmerName}</p>
+                                <p><strong>Farm Name / ID:</strong> ${farm.farmName}</p>
+                                <p><strong>Address:</strong> ${farm.address}</p>
+                                <p><strong>Species Cultured:</strong> ${farm.primarySpecies}</p>
+                            </div>
+                        </fieldset>`;
+                } catch(error) {
+                    farmDetailsContainer.innerHTML = `<p class="text-red-500 text-center py-4">Could not load farm details.</p>`
+                    console.error("Vet Form Prep Error:", error);
+                }
+            });
+
+            document.getElementById('backToFarmReportsBtn').addEventListener('click', () => {
+                viewFarmReports(currentFarmId);
+            });
+
+            const vetForm = document.getElementById('vetVisitForm');
+            
+            vetForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const prescriptionData = [];
+                document.querySelectorAll('.prescription-entry').forEach(entry => {
+                    const medicineInput = entry.querySelector('[data-field="medicine"]');
+                    if (medicineInput && medicineInput.value.trim() !== '') {
+                        prescriptionData.push({
+                            medicine: medicineInput.value,
+                            dosage: entry.querySelector('[data-field="dosage"]').value,
+                            route: entry.querySelector('[data-field="route"]').value,
+                            frequency: entry.querySelector('[data-field="frequency"]').value,
+                            duration: entry.querySelector('[data-field="duration"]').value,
+                            remarks: entry.querySelector('[data-field="remarks"]').value
+                        });
+                    }
+                });
+
+                const newVetReport = { 
+                    farmId: currentFarmId, 
+                    visitDate: new Date().toISOString().split('T')[0],
+                    reason: document.getElementById('vetReason').value,
+                    historyOfProblem: document.getElementById('vetHistory').value,
+                    notes: document.getElementById('vetNotes').value,
+                    provisionalDiagnosis: document.getElementById('vetProvisionalDiagnosis').value,
+                    confirmedDiagnosis: document.getElementById('vetConfirmedDiagnosis').value,
+                    prescription: prescriptionData,
+                    withdrawalPeriod: document.getElementById('vetWithdrawalPeriod').value,
+                    followUp: document.getElementById('vetFollowUp').value,
+                };
+                
+                try {
+                     const response = await fetch(`${API_URL}/vetReports`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newVetReport)
+                    });
+                    if (!response.ok) throw new Error('Failed to submit report.');
+
+                    successMessage.textContent = 'The prescription and report have been logged successfully.';
+                    successModal.style.display = 'flex';
+                    vetForm.reset();
+                    viewFarmReports(currentFarmId);
+                } catch(error) {
+                    alert("Error submitting vet report. Please try again.");
+                    console.error("Vet Submit Error:", error);
+                }
+            });
+            
+            // --- Government Portal Logic ---
+            document.getElementById('govLoginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const officialId = document.getElementById('govId').value;
+                const password = document.getElementById('govPassword').value;
+                const errorEl = document.getElementById('gov-login-error');
+                errorEl.classList.add('hidden');
+                
+                try {
+                    const response = await fetch(`${API_URL}/govOfficials?officialId=${officialId}`);
+                    const officials = await response.json();
+                    if(officials.length > 0 && officials[0].password === password) {
+                        renderGovDashboard();
+                        showGovSection('government-dashboard-section');
+                    } else {
+                        throw new Error("Invalid credentials");
+                    }
+                } catch (error) {
+                    errorEl.textContent = 'Invalid official ID or password.';
+                    errorEl.classList.remove('hidden');
+                    console.error("Login Error:", error);
+                }
+            });
+
+            // --- CALCULATOR LOGIC (Unchanged from original as it doesn't use mock data) ---
+            const masterDrugData = {
+                'Amoxicillin': { mrl_ug: 50, tHalf_hr: 18 },'Ciprofloxacin': { mrl_ug: 100, tHalf_hr: 30 },'Enrofloxacin': { mrl_mg: 0.1, ko_min: 0.08, ko_max: 0.12 },'Erythromycin': { mrl_ug: 200, tHalf_hr: 60 },'Florfenicol': { mrl_ug: 1000, tHalf_hr: 125 },'Flumequine': { mrl_ug: 500, tHalf_hr: 85 },'Formalin': { mrl_mg: 0, ko_na: true },'Malachite Green': { mrl_mg: 0.002, ko_min: 0.05, ko_max: 0.08 },'Oxolinic Acid': { mrl_ug: 30, tHalf_hr: 200 },'Oxytetracycline': { mrl_ug: 100, tHalf_hr: 90, mrl_mg: 0.2, ko_min: 0.15, ko_max: 0.25 },'Potassium Permanganate': { mrl_mg: 0, ko_na: true },'Sarafloxacin': { mrl_ug: 30, tHalf_hr: 35 },'Sulfabromomethazine': { mrl_mg: 0.1, ko_approx: 0.06 },'Sulfadimethoxine': { mrl_mg: 0.1, ko_min: 0.05, ko_max: 0.10 },'Sulfaethoxypyridazine': { mrl_mg: 0.1, ko_approx: 0.07 },'Sulphadiazine': { mrl_ug: 100, tHalf_hr: 36, mrl_mg: 0.1, ko_min: 0.05, ko_max: 0.10 },'Tetracycline': { mrl_mg: 0.1, ko_min: 0.12, ko_max: 0.20 },'Trimethoprim': { mrl_ug: 50, tHalf_hr: 30, mrl_mg: 0.05, ko_min: 0.10, ko_max: 0.18 },
+            };
+            const drugSelect1 = document.getElementById('drugSelect');
+            const drugSelect2 = document.getElementById('antimicrobial');
+            const drugNames = Object.keys(masterDrugData).sort();
+            drugNames.forEach(name => {
+                drugSelect1.add(new Option(name, name));
+                drugSelect2.add(new Option(name, name));
+            });
+            (function() {
+                const tab1Btn = document.getElementById('tab1-btn'), tab2Btn = document.getElementById('tab2-btn');
+                const tab1Content = document.getElementById('tab1-content'), tab2Content = document.getElementById('tab2-content');
+                const subtitle = document.getElementById('header-subtitle');
+                const switchTab = (activeBtn, inactiveBtn, activeContent, inactiveContent, text) => {
+                    activeContent.style.display = 'block'; inactiveContent.style.display = 'none';
+                    subtitle.textContent = text;
+                    activeBtn.classList.add('border-blue-600', 'text-blue-700'); activeBtn.classList.remove('border-transparent', 'text-gray-500');
+                    inactiveBtn.classList.add('border-transparent', 'text-gray-500'); inactiveBtn.classList.remove('border-blue-600', 'text-blue-700');
+                };
+                tab1Btn.addEventListener('click', () => switchTab(tab1Btn, tab2Btn, tab1Content, tab2Content, 'Predicts the optimal withdrawal time (WDT) to ensure fish are residue-safe.'));
+                tab2Btn.addEventListener('click', () => switchTab(tab2Btn, tab1Btn, tab2Content, tab1Content, 'Calculate the final residue rate based on dosage and environmental factors.'));
+            })();
+            (function() {
+                document.getElementById('drugSelect').addEventListener('change', function(e) {
+                    const data = masterDrugData[e.target.value] || {};
+                    document.getElementById('mrl').value = data.mrl_ug || '';
+                    document.getElementById('thalf').value = data.tHalf_hr || '';
+                });
+                const autoPopulateTab2 = (wdtDays, dosage, tHalfHours, selectedDrugName) => {
+                    const antimicrobialSelectTab2 = document.getElementById('antimicrobial'), roInputTab2 = document.getElementById('ro'), aoInputTab2 = document.getElementById('ao'), koInputTab2 = document.getElementById('ko'), tInputTab2 = document.getElementById('t'), resetBtnTab2 = document.getElementById('resetTab2');
+                    antimicrobialSelectTab2.value = selectedDrugName;
+                    antimicrobialSelectTab2.dispatchEvent(new Event('change'));
+                    roInputTab2.value = dosage || '';
+                    aoInputTab2.value = 0;
+                    if (tHalfHours > 0) koInputTab2.value = ((Math.log(2) / tHalfHours) * 24).toFixed(4);
+                    else if (!masterDrugData[selectedDrugName]?.ko_na) koInputTab2.value = '';
+                    tInputTab2.value = wdtDays.toFixed(1);
+                    antimicrobialSelectTab2.disabled = true; roInputTab2.disabled = true; aoInputTab2.disabled = false; koInputTab2.disabled = true; tInputTab2.disabled = true;
+                    resetBtnTab2.style.display = 'flex';
+                };
+                document.getElementById('calcForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const submitButton = document.getElementById('submitButton'), buttonText = document.getElementById('buttonText'), spinner = document.getElementById('spinner');
+                    const loadingTextDiv = document.getElementById('loadingText'), loadingMessage = document.getElementById('loadingMessage');
+                    const resultsDiv = document.getElementById('results'), dosagePlanDiv = document.getElementById('dosagePlan');
+                    submitButton.disabled = true; buttonText.style.display = 'none'; spinner.style.display = 'block';
+                    loadingTextDiv.style.display = 'block'; resultsDiv.style.display = 'none'; dosagePlanDiv.style.display = 'none';
+                    const loadingMessages = ["Analyzing pharmacokinetic data...", "Calibrating elimination model...", "Simulating residue depletion curves...", "Finalizing withdrawal period..."];
+                    let messageIndex = 0; loadingMessage.textContent = loadingMessages[messageIndex];
+                    const messageInterval = setInterval(() => { messageIndex++; if (messageIndex < loadingMessages.length) loadingMessage.textContent = loadingMessages[messageIndex]; }, 600);
+                    setTimeout(() => {
+                        clearInterval(messageInterval); loadingTextDiv.style.display = 'none';
+                        const mrl = parseFloat(document.getElementById('mrl').value), cmax = parseFloat(document.getElementById('cmax').value);
+                        const tHalfHours = parseFloat(document.getElementById('thalf').value), temp = parseFloat(document.getElementById('temp').value);
+                        const dosage = parseFloat(document.getElementById('dosage').value), resultText = document.getElementById('resultText');
+                        const degreeDayText = document.getElementById('degreeDayText'), selectedDrugName = document.getElementById('drugSelect').value;
+                        resultsDiv.style.display = 'block';
+                        if (isNaN(mrl) || isNaN(cmax) || isNaN(tHalfHours) || mrl <= 0 || cmax <= 0 || tHalfHours <= 0) {
+                            resultText.textContent = "Invalid Input"; resultText.className = 'text-4xl font-bold mt-2 text-red-600';
+                            degreeDayText.textContent = "Please enter valid, positive numbers for all required fields.";
+                        } else if (cmax <= mrl) {
+                            resultText.textContent = "0 Days"; resultText.className = 'text-4xl font-bold mt-2 text-green-600';
+                            degreeDayText.textContent = "Peak concentration is already below the MRL.";
+                            generatePlan(0, dosage); if (dosage && selectedDrugName) autoPopulateTab2(0, dosage, tHalfHours, selectedDrugName);
+                        } else {
+                            const k = Math.log(2) / tHalfHours, wdtHours = Math.log(cmax / mrl) / k, wdtDays = wdtHours / 24;
+                            resultText.textContent = `${wdtDays.toFixed(1)} Days`; resultText.className = 'text-4xl font-bold mt-2 text-blue-600';
+                            if (!isNaN(temp) && temp > 0) degreeDayText.textContent = `Equal to ${(wdtDays * temp).toFixed(0)} degree-days at ${temp}°C.`;
+                            else degreeDayText.textContent = 'Enter a water temperature to calculate degree-days.';
+                            generatePlan(wdtDays, dosage); if (dosage && selectedDrugName) autoPopulateTab2(wdtDays, dosage, tHalfHours, selectedDrugName);
+                        }
+                        resultsDiv.scrollIntoView({ behavior: 'smooth' });
+                        submitButton.disabled = false; buttonText.style.display = 'inline'; spinner.style.display = 'none';
+                    }, 3000);
+                });
+                function generatePlan(wdtDays, dosage) {
+                    const dosagePlanDiv = document.getElementById('dosagePlan'), planContainer = document.getElementById('planContainer');
+                    if (isNaN(dosage) || dosage <= 0) { dosagePlanDiv.style.display = 'none'; return; }
+                    dosagePlanDiv.style.display = 'block'; planContainer.innerHTML = '';
+                    const today = new Date(), treatmentDuration = 7, withdrawalEndDay = treatmentDuration + Math.ceil(wdtDays);
+                    const planDuration = Math.max(30, withdrawalEndDay + 5), startDayOfWeek = today.getDay();
+                    for (let i = 0; i < startDayOfWeek; i++) planContainer.innerHTML += `<div class="border rounded-lg"></div>`;
+                    for (let i = 0; i < planDuration; i++) {
+                        const dayEl = document.createElement('div');
+                        dayEl.className = 'p-2 rounded-lg border text-center aspect-square flex flex-col justify-center items-center cursor-pointer';
+                        const currentDate = new Date(); currentDate.setDate(today.getDate() + i);
+                        let statusColor, shortStatus;
+                        if (i < treatmentDuration) { statusColor = 'bg-blue-100 border-blue-300 text-blue-800'; shortStatus = 'Treat'; }
+                        else if (i < withdrawalEndDay) { statusColor = 'bg-orange-100 border-orange-300 text-orange-800'; shortStatus = 'WDT'; }
+                        else { statusColor = 'bg-green-100 border-green-300 text-green-800'; shortStatus = 'Safe'; }
+                        dayEl.classList.add(...statusColor.split(' '));
+                        dayEl.innerHTML = `<div class="font-bold text-lg">${currentDate.getDate()}</div><div class="text-xs font-medium">${shortStatus}</div>`;
+                        planContainer.appendChild(dayEl);
+                    }
+                }
+            })();
+            (function() {
+                const form = document.getElementById('calculatorForm'), resultContainer = document.getElementById('result-container');
+                const resultEl = document.getElementById('result'), errorEl = document.getElementById('error-message');
+                const mrlWarningEl = document.getElementById('mrl-warning'), mrlMessageEl = document.getElementById('mrl-message');
+                const resultBox = document.getElementById('result-box'), resultLabel = document.getElementById('result-label');
+                const antimicrobialSelect = document.getElementById('antimicrobial'), koInput = document.getElementById('ko'), koHint = document.getElementById('ko-hint');
+                function updateKoField() {
+                    const selectedDrug = antimicrobialSelect.value, data = masterDrugData[selectedDrug] || {}, isLocked = koInput.disabled;
+                    koInput.disabled = isLocked;
+                    if (data.ko_na === true) {
+                        koInput.value = 0; if (!isLocked) koInput.disabled = true;
+                        koHint.textContent = "Decay constant is not applicable for this selection.";
+                    } else {
+                        if (isLocked) koInput.disabled = false;
+                        if (data.ko_min && data.ko_max) {
+                            const avg = (data.ko_min + data.ko_max) / 2;
+                            if (!isLocked) koInput.value = avg.toFixed(3);
+                            koHint.textContent = `Recommended range: ${data.ko_min} to ${data.ko_max} day⁻¹. Average is suggested.`;
+                        } else if (data.ko_approx) {
+                            if (!isLocked) koInput.value = data.ko_approx;
+                            koHint.textContent = `Approximate value: ~${data.ko_approx} day⁻¹ is suggested.`;
+                        } else {
+                            if (!isLocked) koInput.value = '';
+                            koHint.textContent = 'Decay constant data not available. Please enter a value.';
+                        }
+                        if (isLocked) koInput.disabled = true;
+                    }
+                }
+                antimicrobialSelect.addEventListener('change', updateKoField);
+                document.addEventListener('DOMContentLoaded', () => updateKoField());
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    resultContainer.classList.add('hidden'); mrlWarningEl.classList.add('hidden'); errorEl.classList.add('hidden');
+                    resultBox.className = 'mt-2 p-6 bg-green-50 border border-green-200 rounded-lg text-center';
+                    resultLabel.className = 'text-sm text-green-700'; resultEl.className = 'text-3xl font-bold text-green-900';
+                    const Ro = parseFloat(document.getElementById('ro').value), Ao = parseFloat(document.getElementById('ao').value);
+                    const Ko = parseFloat(koInput.value), W1 = parseFloat(document.getElementById('w1').value);
+                    const W2 = parseFloat(document.getElementById('w2').value), t = parseFloat(document.getElementById('t').value);
+                    const selectedDrugName = antimicrobialSelect.value, drugInfo = masterDrugData[selectedDrugName] || {}, mrl_mg = drugInfo.mrl_mg;
+                    if ([Ro, Ao, Ko, W1, W2, t].some(isNaN)) { showError("Please ensure all fields are filled with valid numbers."); return; }
+                    if (W1 <= 0 || W2 <= 0) { showError("Inputs W₁ and W₂ must be greater than zero for the natural logarithm."); return; }
+                    const L = 0.02, Gt = (Math.log(W2) - Math.log(W1) * t) / 100, exponent = -(Ko + L * Gt), Rt = (Ro * Math.exp(exponent)) + Ao;
+                    resultEl.textContent = `${Rt.toFixed(6)} mg/kg`; resultContainer.classList.remove('hidden');
+                    if (mrl_mg !== undefined && Rt > mrl_mg) {
+                        mrlMessageEl.textContent = `The calculated value exceeds the MRL of ${mrl_mg} mg/kg for ${selectedDrugName}.`;
+                        mrlWarningEl.classList.remove('hidden'); resultBox.className = 'mt-2 p-6 bg-red-50 border border-red-200 rounded-lg text-center';
+                        resultLabel.className = 'text-sm text-red-700'; resultEl.className = 'text-3xl font-bold text-red-900';
+                    }
+                });
+                function showError(message) { errorEl.textContent = message; errorEl.classList.remove('hidden'); resultContainer.classList.remove('hidden'); }
+                document.getElementById('resetTab2').addEventListener('click', () => {
+                    const inputs = [antimicrobialSelect, koInput, ...form.querySelectorAll('input')];
+                    inputs.forEach(el => { el.disabled = false; if (el.type !== 'select-one') el.value = ''; });
+                    antimicrobialSelect.selectedIndex = 0; updateKoField();
+                    resultContainer.classList.add('hidden'); mrlWarningEl.classList.add('hidden'); errorEl.classList.add('hidden');
+                    document.getElementById('resetTab2').style.display = 'none';
+                });
+            })();
+
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+{
+  "vets": [
+    {
+      "id": 1,
+      "name": "Dr. Emily Carter",
+      "clinic": "Healthy Hooves Veterinary Clinic",
+      "license": "VET-12345",
+      "password": "password123",
+      "contact": "(555) 123-4567 | dr.carter@healthyhooves.com",
+      "address": "123 Farm Road, Countryside, CO"
+    }
+  ],
+  "govOfficials": [
+    {
+      "id": 1,
+      "officialId": "GOV-ADMIN",
+      "password": "password123",
+      "name": "Regulatory Officer"
+    }
+  ],
+  "farms": [
+    {
+      "id": 101,
+      "farmName": "Sunrise Fisheries",
+      "address": "12 Beach Rd, Coast City",
+      "farmerName": "John Doe",
+      "phone": "555-1111",
+      "aadhar": "123456789012",
+      "location": "Coastal Region",
+      "primarySpecies": "Shrimp",
+      "pondId": "P-01",
+      "pondSize": "1.2 ha",
+      "stockingDensity": "100,000/ha"
+    },
+    {
+      "id": 102,
+      "farmName": "Clearwater Aquatics",
+      "address": "45 River Ln, Freshwater Town",
+      "farmerName": "Jane Smith",
+      "phone": "555-2222",
+      "aadhar": "210987654321",
+      "location": "Inland Valley",
+      "primarySpecies": "Rohu, Catla",
+      "pondId": "N-05",
+      "pondSize": "2.5 ha",
+      "stockingDensity": "10,000/ha"
+    },
+    {
+      "id": 103,
+      "farmName": "Bluefin Marine Farms",
+      "address": "Pier 7, Ocean Metropolis",
+      "farmerName": "Sam Wilson",
+      "phone": "555-3333",
+      "aadhar": "112233445566",
+      "location": "Offshore Pens",
+      "primarySpecies": "Tuna",
+      "pondId": "C-12",
+      "pondSize": "5000 m³",
+      "stockingDensity": "5/m³"
+    },
+    {
+      "farmName": "test farm 1",
+      "address": "test farm address 1",
+      "farmerName": "test farmer 1",
+      "phone": "2512354568",
+      "aadhar": "121212121212",
+      "id": 104
+    },
+    {
+      "farmName": "test farm 1",
+      "address": "test farm address 1",
+      "farmerName": "test farmer 1",
+      "phone": "2512354568",
+      "aadhar": "121212121212",
+      "id": 105
+    },
+    {
+      "farmName": "test farm 1",
+      "address": "test farm address 1",
+      "farmerName": "test farmer 1",
+      "phone": "2512354568",
+      "aadhar": "121212121212",
+      "id": 106
+    },
+    {
+      "farmName": "2",
+      "address": "2",
+      "farmerName": "2",
+      "phone": "1010101010",
+      "aadhar": "000000000000",
+      "id": 107
+    }
+  ],
+  "farmerReports": [
+    {
+      "id": 1,
+      "cultureType": "freshwater",
+      "submissionDate": "2025-09-05",
+      "general": {
+        "animalId": "101",
+        "animalType": "Rohu",
+        "animalPen": "Pen-A"
+      },
+      "feedAmu": [
+        {
+          "feedName": "GrowFeed-500",
+          "amu": "Oxytetracycline",
+          "dosage": "10 mg/kg",
+          "startDate": "2025-09-01"
+        }
+      ],
+      "otherAmu": []
+    },
+    {
+      "id": 2,
+      "cultureType": "brackishwater",
+      "submissionDate": "2025-09-04",
+      "general": {
+        "animalId": "215",
+        "animalType": "Vannamei Shrimp",
+        "animalPen": "Pond-3"
+      },
+      "feedAmu": [],
+      "otherAmu": [
+        {
+          "sourceType": "Bath Treatment",
+          "amu": "Formalin",
+          "dosage": "0.05 ppm",
+          "appDate": "2025-09-03"
+        }
+      ]
+    },
+    {
+      "cultureType": "freshwater",
+      "submissionDate": "2025-09-07",
+      "general": {
+        "animalId": "45",
+        "animalType": "test animal 1",
+        "animalPen": "test pen 1"
+      },
+      "feedAmu": [
+        {
+          "feedName": "test 1",
+          "amu": "test 1",
+          "dosage": "test 1",
+          "startDate": "2025-09-23"
+        }
+      ],
+      "otherAmu": [
+        {
+          "sourceType": "Topical",
+          "amu": "Acriflavine",
+          "dosage": "0.02",
+          "appDate": "2025-09-27"
+        }
+      ],
+      "id": 3
+    }
+  ],
+  "vetReports": [
+    {
+      "id": 201,
+      "farmId": 101,
+      "visitDate": "2025-09-03",
+      "reason": "Sudden increase in shrimp mortality, lethargy.",
+      "historyOfProblem": "Problem started 2 days ago. Approximately 5% mortality. Last water change was 4 days ago. No previous treatments applied for this issue. Seed sourced from \"AquaGen Hatcheries\".",
+      "notes": "Physical observation: Shrimp show white spots on carapace and gills. Behavior is lethargic.\nWet mount: Negative for common ectoparasites.\nWater quality: Ammonia at 0.5 ppm, Nitrite at 0.2 ppm. Elevated levels noted.",
+      "provisionalDiagnosis": "Suspected White Spot Syndrome (WSSV) secondary to water quality stress.",
+      "confirmedDiagnosis": "Lab confirmation pending.",
+      "prescription": [
+        {
+          "medicine": "Glutaraldehyde & BKC solution",
+          "dosage": "1 liter/ha",
+          "route": "Water",
+          "frequency": "Once",
+          "duration": "1 day",
+          "remarks": "Apply during high aeration."
+        },
+        {
+          "medicine": "Vitamin C & Probiotic mix",
+          "dosage": "5 g/kg feed",
+          "route": "Feed",
+          "frequency": "Twice daily",
+          "duration": "7 days",
+          "remarks": "To boost immunity."
+        }
+      ],
+      "withdrawalPeriod": "15 days for any edible products",
+      "followUp": "1. Perform a 50% water change immediately.\n2. Reduce feeding by half for 3 days.\n3. Re-check water parameters daily.\n4. Strictly avoid banned drugs.\n5. Report back in 3 days or if mortality worsens."
+    },
+    {
+      "id": 202,
+      "farmId": 102,
+      "visitDate": "2025-09-01",
+      "reason": "Scheduled Monthly Health Assessment.",
+      "historyOfProblem": "Routine checkup, no reported issues from farmer. Feeding has been consistent. Water quality logs appear normal.",
+      "notes": "Fish appear healthy and active. Gill swabs and skin scrapes were negative for common parasites. Water quality is within optimal ranges. Growth rate is consistent with expectations.",
+      "provisionalDiagnosis": "Healthy stock.",
+      "confirmedDiagnosis": "N/A",
+      "prescription": [],
+      "withdrawalPeriod": "N/A",
+      "followUp": "No immediate action required. Continue current management practices. Next routine visit in one month."
+    }
+  ]
+}
